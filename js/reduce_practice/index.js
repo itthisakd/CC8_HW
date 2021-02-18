@@ -158,9 +158,10 @@ console.log(paymentMethod)
 // 7. หายอดรวมในแต่ละวัน
 
 const salesByDate = sales.reduce((acc, cur) => {
-  const productPrice = cur.product.unitPrice;
   const finalPrice =
-    "discount" in cur ? productPrice * (1 - cur.discount) : productPrice;
+    "discount" in cur
+      ? cur.product.unitPrice * (1 - cur.discount)
+      : cur.product.unitPrice;
   const date = cur.saleDate;
   return date in acc
     ? {
@@ -181,24 +182,58 @@ console.log(salesByDate)
 
 
 // 8. เรียงยอดขายของแต่ละรุ่นจากมากไปน้อย
-let source = { ...salesByModel }
+const salesByModelSortedObj = sales.reduce((acc, cur) => {
+  const finalPrice =
+    "discount" in cur
+      ? cur.product.unitPrice - (1 - cur.discount)
+      : cur.product.unitPrice;
+  const brand = cur.product.name;
+  const model = cur.product.model; 
 
-console.log(`8. Sales by Model (sorted)`)
-temp = Object.entries(source);
+  return model in acc
+    ? {
+        ...acc,
+        [brand + " " + model]: [
+          brand + model,
+          ([brand + " " + model][1] += finalPrice.toFixed(2)),
+        ],
+      }
+    : {
+        ...acc,
+        [brand + " " + model]: [brand + " " + model, finalPrice.toFixed(2)],
+      };
+}, {})
 
-console.log(Object.entries(temp))
+salesByModelSortedArr = Object.values(salesByModelSortedObj).sort(
+  (a, b) => b[1] - a[1]
+);
 
+console.log(`8. Sales by Model (sorted): `);
+console.log(salesByModelSortedArr)
 
 // 9. เรียงลูกค้าที่ซื้อมากที่สุดจากมากไปน้อย
 let arrOfCustomers = [...Object.keys(customers)];
 let salesByCustomer = new Map()
 arrOfCustomers.forEach(cust => salesByCustomer.set(cust, customers[cust].amountPaid.toFixed(2)))
-let salesByCustomerSorted = [...salesByCustomer].sort((a, b) => a[1] - b[1])
+let salesByCustomerSorted = [...salesByCustomer].sort((a, b) => b[1] - a[1])
 
 console.log(`9. Sales by Customer (sorted): `)
 console.log(salesByCustomerSorted)
 
 
-// const isSameDay = (d1, d2) => {
 
+//other stuff...
+
+// let date1 = new Date(2020, 6, 15, 13, 45, 5);
+// let date2 = new Date(2020, 6, 15, 8, 23, 23);
+
+
+// const isSameDay = (d1, d2) => {
+//   return (
+//     d1.getDate() === d2.getDate() &&
+//     d1.getMonth() === d2.getMonth() &&
+//     d1.getFullYear() === d2.getFullYear()
+//   );
 // }
+
+// console.log(isSameDay(date1, date2))
