@@ -1,5 +1,7 @@
-// import * as sales from '../js_advanced/data'
-const sales = require("./data");
+// // import * as sales from '../js_advanced/data'
+// const sales = require("./data");
+
+const { forEach } = require("./data")
 
 
 // 1. จำนวน transaction ทั้งหมด
@@ -306,7 +308,7 @@ console.log(`9. Sales by Customer (sorted): `);
 console.log(salesByCustomerSorted);
 
 // Sales by Customer (sorted): 
-// [
+// // [
 //   [ 'Micky', '109700.00' ], [ 'Tle', '95030.00' ],
 //   [ 'Sun', '68094.00' ],    [ 'Cin', '67879.00' ],
 //   [ 'Game', '66940.00' ],   [ 'Palm', '66510.00' ],
@@ -340,3 +342,45 @@ console.log(salesByCustomerSorted);
 // }
 
 // console.log(isSameDay(date1, date2))
+
+
+
+
+
+// ALTERNATIVE APPROACH TO 8.
+
+//INPUT: 
+const res = {
+  iPhone: {
+    '12': [ 9, 296098.35 ],
+    '12 Pro': [ 9, 404097.1 ],
+    '11 Pro': [ 2, 73798.4 ],
+    SE2000: [ 1, 14900 ],
+    '12 Mini': [ 4, 103598.29999999999 ]
+  },
+  Samsung: { S21: [ 8, 223196.75 ], A31: [ 3, 23995.55 ], A42: [ 4, 47960 ] },
+  Oppo: { A15: [ 1, 4299 ], Reno5: [ 4, 79960 ] },
+  Xiaomi: { 'Redmi 9C': [ 2, 6797.05 ] },
+  Vivo: {
+    'V20 Pro': [ 4, 59995.15 ],
+    'X50 Pro': [ 2, 39997.35 ],
+    V20: [ 1, 10999 ]
+  }
+}
+
+
+
+const r = Object.entries(res)
+  .reduce(
+    (acc, [brand, value]) => [
+      ...acc,
+      ...Object.entries(value).map(([model, sales]) => [
+        `${brand} ${model}`,
+        sales[1],
+      ]),
+    ],
+    []
+  )
+  .sort((a, b) => b[1] - a[1]);
+
+  console.log(r)
